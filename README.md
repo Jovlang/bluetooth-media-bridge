@@ -26,7 +26,9 @@ The executable is written to `bin\media-bridge.exe`. No third-party runtime is r
 
 ## Run
 
-Open VLC or MPC-HC, then double-click `Start.cmd`. The bridge runs in the background and appears in Windows media controls as **VLC / MPC-HC headset controls**. Use `Stop.cmd` to exit and remove that media session.
+Open VLC or MPC-HC, then double-click `Start.cmd`. The bridge runs in the background and appears in Windows media controls as **VLC / MPC-HC headset controls**. A notification-area icon shows whether the bridge is connected to a player, waiting for a player, or disabled. Windows may place it in the tray overflow menu.
+
+Click or right-click the tray icon to enable/disable forwarding, open the diagnostic log, or exit. Disabling leaves the tray icon running so you can enable it again. **Exit** or `Stop.cmd` stops the process and removes the icon and media session. The icon is restored automatically if Windows Explorer restarts.
 
 ```bat
 bin\media-bridge.exe --inspect
