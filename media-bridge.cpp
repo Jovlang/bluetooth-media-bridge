@@ -22,11 +22,15 @@ static UINT taskbarCreated;
 static constexpr UINT trayMessage=WM_APP+2;
 static constexpr UINT toggleCommand=40001,logCommand=40002,exitCommand=40003;
 static NOTIFYICONDATAW tray={};
+static HICON bridgeIcon=nullptr;
 static std::wstring logPath;
 static void UpdateTray(bool add=false){
  tray.cbSize=sizeof(tray);tray.hWnd=host;tray.uID=1;
  tray.uFlags=NIF_MESSAGE|NIF_ICON|NIF_TIP|NIF_SHOWTIP;
- tray.uCallbackMessage=trayMessage;tray.hIcon=LoadIconW(nullptr,IDI_APPLICATION);
+ tray.uCallbackMessage=trayMessage;
+ if(!bridgeIcon)bridgeIcon=(HICON)LoadImageW(GetModuleHandleW(nullptr),MAKEINTRESOURCEW(101),IMAGE_ICON,
+   GetSystemMetrics(SM_CXSMICON),GetSystemMetrics(SM_CYSMICON),LR_DEFAULTCOLOR);
+ tray.hIcon=bridgeIcon;
  std::wstring tip=L"Bluetooth Media Bridge - ";
  if(!enabled)tip+=L"disabled";
  else if(!target)tip+=L"waiting for VLC / MPC-HC";
@@ -93,7 +97,7 @@ static LRESULT CALLBACK Window(HWND w,UINT m,WPARAM a,LPARAM b){
   HWND next=Target();if(next!=target){target=next;controls.IsEnabled(enabled&&target!=nullptr);UpdateTray();fprintf(logFile,"Target=%p\n",target);fflush(logFile);}
   return 0;
  }
- if(m==WM_DESTROY){KillTimer(w,1);Shell_NotifyIconW(NIM_DELETE,&tray);PostQuitMessage(0);return 0;}
+ if(m==WM_DESTROY){KillTimer(w,1);Shell_NotifyIconW(NIM_DELETE,&tray);if(bridgeIcon){DestroyIcon(bridgeIcon);bridgeIcon=nullptr;}PostQuitMessage(0);return 0;}
  return DefWindowProcW(w,m,a,b);
 }
 int wmain(int argc,wchar_t**argv){

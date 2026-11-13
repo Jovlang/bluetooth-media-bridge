@@ -12,5 +12,7 @@ if not defined WindowsSdkDir (
 )
 if not exist bin mkdir bin
 if not exist build mkdir build
-cl /nologo /std:c++17 /EHsc /O2 /MT /I "%WindowsSdkDir%Include\%WindowsSDKVersion%cppwinrt" media-bridge.cpp /Fo:build\media-bridge.obj /Fe:bin\media-bridge.exe /link windowsapp.lib user32.lib shell32.lib
+rc /nologo /fo build\media-bridge.res media-bridge.rc
+if errorlevel 1 exit /b %errorlevel%
+cl /nologo /std:c++17 /EHsc /O2 /MT /I "%WindowsSdkDir%Include\%WindowsSDKVersion%cppwinrt" media-bridge.cpp build\media-bridge.res /Fo:build\media-bridge.obj /Fe:bin\media-bridge.exe /link windowsapp.lib user32.lib shell32.lib
 exit /b %errorlevel%
